@@ -4,7 +4,7 @@ A web app that helps a UK energy buyer decide how much power to buy on the day-a
 
 Data: Elexon BMRS only. Actual wind generation (`FUELHH`, fuel type `WIND`) and wind forecasts (`WINDFOR`). Scope: purchase decisions made in January 2026 (delivery days 2 to 31 January 2026).
 
-**Live app:** `TODO: add Vercel link here`
+**Live app:** `https://xqm0s34a-4jmu.vercel.app/`
 
 **Use of AI tools:** This project was built with the help of Claude Code (Anthropic's AI coding assistant) for planning, code generation and documentation. All code was reviewed and run by the author.
 
