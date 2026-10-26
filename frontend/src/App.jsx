@@ -6,6 +6,7 @@ import Card from './components/Card'
 import Controls from './components/Controls'
 import DayChart from './components/DayChart'
 import Guidance from './components/Guidance'
+import OrderTable from './components/OrderTable'
 import { formatDateOnly, formatDayTime } from './format'
 import { useApi } from './useApi'
 
@@ -69,6 +70,12 @@ function Dashboard({ config }) {
           {forecast.data && <Guidance forecast={forecast.data} />}
         </Card>
       </div>
+
+      {forecast.data?.order && (
+        <Card title="Recommended order" subtitle="Power to buy from other sources in each hour, using the safe wind figure">
+          <OrderTable forecast={forecast.data} />
+        </Card>
+      )}
 
       <AccuracySection accuracy={accuracy} />
     </>

@@ -45,6 +45,13 @@ class BuyPlan(BaseModel):
     outcome: PlanOutcome | None
 
 
+class OrderHour(BaseModel):
+    target_time: datetime
+    forecast_mw: float
+    safe_wind_mw: float
+    buy_mw: float  # the recommended order for this hour
+
+
 class ForecastResponse(BaseModel):
     delivery_date: date
     cutoff_utc: datetime      # the buyer's deadline
@@ -52,6 +59,7 @@ class ForecastResponse(BaseModel):
     hours: list[ForecastHour]
     history: HistorySummary | None   # None when too few earlier days exist
     plan: BuyPlan | None             # None without history or without a demand figure
+    order: list[OrderHour] | None    # hour-by-hour recommended order, same condition as plan
 
 
 class AccuracySummary(BaseModel):

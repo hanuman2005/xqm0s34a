@@ -16,7 +16,8 @@ Data: Elexon BMRS only. Actual wind generation (`FUELHH`, fuel type `WIND`) and 
 4. The buyer enters their demand (GW). The app looks at forecast errors from earlier delivery days only (up to D-2, because day D-1 is not finished when the order is placed). Later days are never used, so there is no peeking into the future.
 5. From those past errors it works out a "safe wind" figure: forecast minus the error that was exceeded in 1 hour out of 10. Buy amount = demand minus safe wind.
 6. The app compares two plans, "trust the forecast" and "use safe wind", and shows how each turned out once the real wind is known: energy that came up short and energy bought but not needed.
-7. A separate look-back section reports accuracy over all of January (typical miss, bias, worst cases, by day, hour and lead time).
+7. The app shows a recommended order: how many GW to buy in each hour of the delivery day, a one-line summary (total GWh, order deadline, peak hour), and a CSV download. It does not place a real order, because there is no market access.
+8. A separate look-back section reports accuracy over all of January (typical miss, bias, worst cases, by day, hour and lead time).
 
 Assumptions:
 - Demand is the same in every hour of the day (the brief gives no demand data, so the buyer types it in).

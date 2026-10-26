@@ -59,13 +59,15 @@ def get_forecast(
     # Only errors from days before this delivery day are used, so there is no peeking into the future.
     comparison = analysis.compare_with_actuals(load_forecasts(), load_actuals(), cutoff_time)
     history = analysis.history_known_at_decision(comparison, delivery_date)
-    plan = None
+    plan = order = None
     if history is not None and demand_mw is not None:
         plan = analysis.build_buy_plan(table, history, demand_mw)
+        order = analysis.hourly_order(table, history, demand_mw)
 
     return ForecastResponse(
         history=history,
         plan=plan,
+        order=order,
         delivery_date=delivery_date,
         cutoff_utc=analysis.cutoff_time_utc(delivery_date, cutoff_time),
         publish_time=table["publish_time"].iloc[0],

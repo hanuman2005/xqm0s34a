@@ -56,6 +56,15 @@ def test_buy_never_negative_when_wind_exceeds_demand():
     assert plan["buy_raw_mw"] == 0
 
 
+def test_hourly_order_buys_demand_minus_safe_wind():
+    day = pd.DataFrame({
+        "target_time": pd.to_datetime(["2026-01-10 01:00", "2026-01-10 00:00"], utc=True),
+        "forecast": [12000.0, 10000.0],
+    })
+    order = analysis.hourly_order(day, {"error_p90": 1000.0}, demand_mw=15000.0)
+    assert [row["buy_mw"] for row in order] == [6000, 4000]  # sorted by time: 00:00 then 01:00
+
+
 client = TestClient(app)
 
 
@@ -63,6 +72,7 @@ def test_api_returns_plan_with_demand_and_history():
     body = client.get("/api/forecast", params={"delivery_date": "2026-01-20", "demand_mw": 30000}).json()
     assert body["history"]["through_date"] == "2026-01-18"
     assert body["plan"]["buy_guided_mw"] >= body["plan"]["buy_raw_mw"]
+    assert len(body["order"]) == 24
 
 
 def test_api_has_no_history_for_first_day():

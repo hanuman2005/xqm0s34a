@@ -119,6 +119,21 @@ def history_known_at_decision(comparison: pd.DataFrame, delivery_day: date) -> d
     }
 
 
+def hourly_order(day_forecast: pd.DataFrame, history: dict, demand_mw: float) -> list[dict]:
+    """The order to place for each hour of the delivery day (the 'guided' plan).
+
+    Columns needed: target_time, forecast. Each row says how many MW to buy in that hour.
+    """
+    safe_wind = (day_forecast["forecast"] - history["error_p90"]).clip(lower=0)
+    table = pd.DataFrame({
+        "target_time": day_forecast["target_time"],
+        "forecast_mw": day_forecast["forecast"],
+        "safe_wind_mw": safe_wind,
+        "buy_mw": (demand_mw - safe_wind).clip(lower=0),
+    })
+    return table.sort_values("target_time").to_dict("records")
+
+
 def build_buy_plan(day_forecast: pd.DataFrame, history: dict, demand_mw: float) -> dict:
     """How much to buy for one delivery day, with and without correcting for past errors.
 
