@@ -81,6 +81,14 @@
 .day-picker {
   display: flex;
   gap: 6px;
+  align-items: stretch;
+}
+.fixed-date {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+  font-weight: 600;
+  white-space: nowrap;
 }
 .controls-summary {
   margin-left: auto;

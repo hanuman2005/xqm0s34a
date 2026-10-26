@@ -13,12 +13,16 @@ export default function Controls({
   const first = config.first_delivery_date
   const last = config.last_delivery_date
 
-  // Move the date by +1 or -1 day (noon avoids any time-zone edge case).
-  const shiftDay = (days) => {
-    const date = new Date(`${deliveryDate}T12:00:00Z`)
+  // Add or subtract days from a "YYYY-MM-DD" date (noon avoids any time-zone edge case).
+  const addDays = (isoDate, days) => {
+    const date = new Date(`${isoDate}T12:00:00Z`)
     date.setUTCDate(date.getUTCDate() + days)
-    onDeliveryDateChange(date.toISOString().slice(0, 10))
+    return date.toISOString().slice(0, 10)
   }
+  const shiftDay = (days) => onDeliveryDateChange(addDays(deliveryDate, days))
+
+  // Orders are placed the day before delivery.
+  const orderDay = addDays(deliveryDate, -1)
 
   return (
     <div className="controls">
@@ -43,13 +47,18 @@ export default function Controls({
       </div>
 
       <div className="control">
-        <span className="control-label">Order placed by (day before, UK time)</span>
-        <input
-          type="time"
-          aria-label="Order cutoff time"
-          value={cutoff}
-          onChange={(event) => event.target.value && onCutoffChange(event.target.value)}
-        />
+        <span className="control-label">Order deadline (UK time)</span>
+        <div className="day-picker">
+          <span className="fixed-date" title="The order is placed the day before delivery">
+            {formatDateOnly(orderDay)}
+          </span>
+          <input
+            type="time"
+            aria-label="Order cutoff time"
+            value={cutoff}
+            onChange={(event) => event.target.value && onCutoffChange(event.target.value)}
+          />
+        </div>
       </div>
 
       <div className="control">
@@ -65,8 +74,8 @@ export default function Controls({
       </div>
 
       <p className="controls-summary">
-        Showing <strong>{formatDateOnly(deliveryDate)}</strong> with the forecast available at{' '}
-        <strong>{cutoff}</strong> the day before.
+        Order on <strong>{formatDateOnly(orderDay)}</strong> by <strong>{cutoff}</strong>, for delivery on{' '}
+        <strong>{formatDateOnly(deliveryDate)}</strong>. The forecast shown is the latest one available at that deadline.
       </p>
     </div>
   )
