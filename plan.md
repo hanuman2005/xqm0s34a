@@ -114,3 +114,4 @@ wind-forecast-app/
 - 2026-10-26: Phase 1 done. Findings in `docs/analysis.md`. Forecasts hourly vs actuals 30-min; actuals need dedupe; 09:00 cutoff -> MAE 2.07 GW, bias +1.77 GW (over-forecast).
 
 
+
