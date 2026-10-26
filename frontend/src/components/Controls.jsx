@@ -1,7 +1,15 @@
 import { formatDateOnly } from '../format'
 
 // Day and decision-time pickers. Changing either one reloads every number on the page.
-export default function Controls({ config, deliveryDate, onDeliveryDateChange, cutoff, onCutoffChange }) {
+export default function Controls({
+  config,
+  deliveryDate,
+  onDeliveryDateChange,
+  cutoff,
+  onCutoffChange,
+  demandGW,
+  onDemandChange,
+}) {
   const first = config.first_delivery_date
   const last = config.last_delivery_date
 
@@ -41,6 +49,18 @@ export default function Controls({ config, deliveryDate, onDeliveryDateChange, c
           aria-label="Order cutoff time"
           value={cutoff}
           onChange={(event) => event.target.value && onCutoffChange(event.target.value)}
+        />
+      </div>
+
+      <div className="control">
+        <span className="control-label">Your demand that day (GW, same every hour)</span>
+        <input
+          type="number"
+          aria-label="Demand in gigawatts"
+          min="0"
+          step="0.5"
+          value={demandGW}
+          onChange={(event) => onDemandChange(event.target.value)}
         />
       </div>
 

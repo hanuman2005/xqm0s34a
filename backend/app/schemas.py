@@ -17,11 +17,41 @@ class ForecastHour(BaseModel):
     error: float | None   # forecast - actual
 
 
+class HistorySummary(BaseModel):
+    """Past errors known at decision time (earlier delivery days only)."""
+    days_used: int
+    through_date: date
+    mae: float
+    bias: float
+    error_p10: float
+    error_p90: float
+
+
+class PlanOutcome(BaseModel):
+    """How each plan turned out once the real wind was known. MWh = MW summed over the day's hours."""
+    shortfall_raw_mwh: float
+    shortfall_guided_mwh: float
+    surplus_raw_mwh: float
+    surplus_guided_mwh: float
+
+
+class BuyPlan(BaseModel):
+    demand_mw: float
+    forecast_avg_mw: float
+    expected_wind_avg_mw: float
+    safe_wind_avg_mw: float
+    buy_raw_mw: float
+    buy_guided_mw: float
+    outcome: PlanOutcome | None
+
+
 class ForecastResponse(BaseModel):
     delivery_date: date
     cutoff_utc: datetime      # the buyer's deadline
     publish_time: datetime    # when the forecast we used was created
     hours: list[ForecastHour]
+    history: HistorySummary | None   # None when too few earlier days exist
+    plan: BuyPlan | None             # None without history or without a demand figure
 
 
 class AccuracySummary(BaseModel):

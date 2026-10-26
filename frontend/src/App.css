@@ -210,6 +210,43 @@
   font-size: 12px;
 }
 
+.guidance-empty {
+  color: var(--ink-soft);
+  font-size: 14px;
+  padding: 8px 0;
+}
+.guidance > .guidance-source:first-child {
+  margin-bottom: 4px;
+}
+.plan-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  margin-bottom: 14px;
+}
+.plan-table th,
+.plan-table td {
+  padding: 8px 6px;
+  border-bottom: 1px solid var(--line);
+  text-align: right;
+  font-weight: 400;
+}
+.plan-table thead th {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+.plan-table th:first-child {
+  text-align: left;
+}
+.plan-table tbody th {
+  font-weight: 500;
+}
+.plan-best td,
+.plan-best th {
+  color: var(--accent);
+  font-weight: 600;
+}
+
 /* ---------- headline accuracy numbers ---------- */
 .kpi-row {
   list-style: none;

@@ -2,14 +2,14 @@ import { Area, CartesianGrid, ComposedChart, Line, ResponsiveContainer, Tooltip,
 import { formatTime, toGW } from '../format'
 
 // Hourly forecast (orange) against what really happened (blue), with the usual range of error shaded.
-// `errorP10` / `errorP90` are the typical misses from the accuracy analysis (forecast - actual, MW).
-export default function DayChart({ hours, errorP10, errorP90 }) {
+// `history` holds the past errors known at order time (forecast - actual, MW). It is null early in the month.
+export default function DayChart({ hours, history }) {
   const rows = hours.map((hour) => ({
     time: formatTime(hour.target_time),
     forecast: hour.forecast,
     actual: hour.actual,
-    // If the forecast is too high by errorP90 the actual is forecast - errorP90, and so on.
-    range: [hour.forecast - errorP90, hour.forecast - errorP10],
+    // If the forecast was too high by error_p90 the actual is forecast - error_p90, and so on.
+    range: history ? [hour.forecast - history.error_p90, hour.forecast - history.error_p10] : null,
   }))
 
   return (
@@ -18,7 +18,7 @@ export default function DayChart({ hours, errorP10, errorP90 }) {
         <li>Gigawatts (GW), hourly, UK time</li>
         <li><span className="swatch" style={{ background: 'var(--series-forecast)' }} />Forecast</li>
         <li><span className="swatch" style={{ background: 'var(--series-actual)' }} />Actual</li>
-        <li><span className="swatch swatch-band" />Likely range of actual (80% of hours)</li>
+        {history && <li><span className="swatch swatch-band" />Likely range of actual (80% of past hours)</li>}
       </ul>
 
       <div className="chart-box" role="img" aria-label="Hourly wind forecast compared with actual generation">
@@ -53,7 +53,7 @@ function DayTooltip({ active, payload, label }) {
       <strong>{label}</strong>
       <div>Forecast: {toGW(row.forecast, 2)} GW</div>
       {row.actual != null && <div>Actual: {toGW(row.actual, 2)} GW</div>}
-      <div>Likely range: {toGW(row.range[0], 1)} to {toGW(row.range[1], 1)} GW</div>
+      {row.range && <div>Likely range: {toGW(row.range[0], 1)} to {toGW(row.range[1], 1)} GW</div>}
     </div>
   )
 }

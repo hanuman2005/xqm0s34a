@@ -19,5 +19,8 @@ UK_TIMEZONE = ZoneInfo("Europe/London")
 FIRST_DELIVERY_DATE = date(2026, 1, 2)
 LAST_DELIVERY_DATE = date(2026, 1, 31)
 
+# Fewest earlier delivery days needed before we trust past errors for buying advice.
+MIN_HISTORY_DAYS = 3
+
 # Time of day (UK) when the buyer must decide, on the day before delivery.
 DEFAULT_CUTOFF = time(9, 0)

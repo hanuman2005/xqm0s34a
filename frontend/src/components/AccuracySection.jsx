@@ -10,7 +10,7 @@ export default function AccuracySection({ accuracy }) {
   return (
     <section aria-labelledby="accuracy-heading">
       <h2 id="accuracy-heading" className="section-title">
-        How accurate were the forecasts in January 2026?
+        Look back: how accurate were the forecasts across January 2026?
       </h2>
 
       {data && <KpiRow summary={data.summary} />}

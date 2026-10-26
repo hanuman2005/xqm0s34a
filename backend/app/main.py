@@ -42,8 +42,9 @@ def get_config():
 def get_forecast(
     delivery_date: date,
     cutoff: str = Query(DEFAULT_CUTOFF.strftime("%H:%M"), description="Decision time on D-1, UK time, HH:MM"),
+    demand_mw: float | None = Query(None, ge=0, description="Buyer's demand in MW (same every hour)"),
 ):
-    """The latest forecast the buyer could see at the cutoff, for one delivery day."""
+    """The latest forecast the buyer could see at the cutoff, plus buying advice from past errors."""
     if not FIRST_DELIVERY_DATE <= delivery_date <= LAST_DELIVERY_DATE:
         raise HTTPException(status_code=404, detail=f"delivery_date must be {FIRST_DELIVERY_DATE} to {LAST_DELIVERY_DATE}")
     cutoff_time = parse_cutoff(cutoff)
@@ -55,7 +56,16 @@ def get_forecast(
     table = forecast.merge(load_actuals(), on="target_time", how="left")
     table["error"] = table["forecast"] - table["actual"]
 
+    # Only errors from days before this delivery day are used, so there is no peeking into the future.
+    comparison = analysis.compare_with_actuals(load_forecasts(), load_actuals(), cutoff_time)
+    history = analysis.history_known_at_decision(comparison, delivery_date)
+    plan = None
+    if history is not None and demand_mw is not None:
+        plan = analysis.build_buy_plan(table, history, demand_mw)
+
     return ForecastResponse(
+        history=history,
+        plan=plan,
         delivery_date=delivery_date,
         cutoff_utc=analysis.cutoff_time_utc(delivery_date, cutoff_time),
         publish_time=table["publish_time"].iloc[0],

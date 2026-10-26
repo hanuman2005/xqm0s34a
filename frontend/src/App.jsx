@@ -36,10 +36,12 @@ export default function App() {
 }
 
 function Dashboard({ config }) {
-  const [deliveryDate, setDeliveryDate] = useState(config.first_delivery_date)
+  const [deliveryDate, setDeliveryDate] = useState(config.last_delivery_date) // latest day: it has the most history
   const [cutoff, setCutoff] = useState(config.default_cutoff)
 
-  const forecast = useApi(() => fetchForecast(deliveryDate, cutoff), [deliveryDate, cutoff])
+  const [demandGW, setDemandGW] = useState('30')
+
+  const forecast = useApi(() => fetchForecast(deliveryDate, cutoff, demandGW), [deliveryDate, cutoff, demandGW])
   const accuracy = useApi(() => fetchAccuracy(cutoff), [cutoff])
 
   return (
@@ -50,6 +52,8 @@ function Dashboard({ config }) {
         onDeliveryDateChange={setDeliveryDate}
         cutoff={cutoff}
         onCutoffChange={setCutoff}
+        demandGW={demandGW}
+        onDemandChange={setDemandGW}
       />
 
       <div className="grid-day">
@@ -58,17 +62,11 @@ function Dashboard({ config }) {
           subtitle={forecast.data && `Latest forecast available at the order deadline (created ${formatDayTime(forecast.data.publish_time)})`}
           state={forecast}
         >
-          {forecast.data && accuracy.data && (
-            <DayChart
-              hours={forecast.data.hours}
-              errorP10={accuracy.data.summary.error_p10}
-              errorP90={accuracy.data.summary.error_p90}
-            />
-          )}
+          {forecast.data && <DayChart hours={forecast.data.hours} history={forecast.data.history} />}
         </Card>
 
-        <Card title="What to plan for" subtitle="Wind you can rely on that day" state={forecast.error ? forecast : accuracy}>
-          {forecast.data && accuracy.data && <Guidance forecast={forecast.data} summary={accuracy.data.summary} />}
+        <Card title="How much to buy" subtitle="Wind to count on, and the amount to buy" state={forecast}>
+          {forecast.data && <Guidance forecast={forecast.data} />}
         </Card>
       </div>
 

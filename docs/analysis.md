@@ -40,6 +40,9 @@ For delivery day D (Jan 2 .. Jan 31 here; decisions made on D-1 in January):
 - Strong **positive bias**: buyer relying on the raw forecast would under-buy thermal by ~1.8 GW on average. Key client message.
 - Error by hour of day is fairly flat (1.8 - 2.5 GW), higher in early morning (03-06h).
 
+## No look-ahead rule (added in Phase 5)
+The table above uses all of January, so it is a look-back report only. For buying advice on delivery day D the app uses errors from delivery days up to D-2 (needs at least 3 days). Using later days would leak the future. Safe wind = forecast - P90 of past (forecast - actual). Buy = demand - safe wind, compared against buying on the raw forecast.
+
 ## Decisions
 - Metrics: MAE, RMSE, bias, P50/P90/P95 abs error, MAPE (guard actual near 0), error by hour of day, error by horizon, daily MAE trend.
 - Show bias-corrected / error-band view: forecast minus bias, with P10-P90 band, as buying guidance.

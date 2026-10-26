@@ -10,7 +10,7 @@ from datetime import date, datetime, time, timedelta
 import numpy as np
 import pandas as pd
 
-from .config import FIRST_DELIVERY_DATE, LAST_DELIVERY_DATE, UK_TIMEZONE
+from .config import FIRST_DELIVERY_DATE, LAST_DELIVERY_DATE, MIN_HISTORY_DAYS, UK_TIMEZONE
 
 
 # ---------- time helpers ----------
@@ -93,6 +93,68 @@ def summarize_errors(comparison: pd.DataFrame) -> dict:
         "p90_abs_error": float(absolute_error.quantile(0.9)),      # 9 hours in 10 miss by less than this
         "p95_abs_error": float(absolute_error.quantile(0.95)),
     }
+
+
+def history_known_at_decision(comparison: pd.DataFrame, delivery_day: date) -> dict | None:
+    """Past forecast errors the buyer could already know when ordering for `delivery_day`.
+
+    Orders are placed on day D-1, when day D-1 is not finished yet. So only delivery
+    days up to D-2 count. Later days are the future and must never be used.
+    Returns None when there are fewer than MIN_HISTORY_DAYS days of history.
+    """
+    last_known_day = delivery_day - timedelta(days=2)
+    known = comparison[comparison["delivery_date"] <= last_known_day].dropna(subset=["error"])
+    days_used = known["delivery_date"].nunique()
+    if days_used < MIN_HISTORY_DAYS:
+        return None
+
+    error = known["error"]
+    return {
+        "days_used": int(days_used),
+        "through_date": known["delivery_date"].max(),
+        "mae": float(error.abs().mean()),
+        "bias": float(error.mean()),
+        "error_p10": float(error.quantile(0.1)),
+        "error_p90": float(error.quantile(0.9)),
+    }
+
+
+def build_buy_plan(day_forecast: pd.DataFrame, history: dict, demand_mw: float) -> dict:
+    """How much to buy for one delivery day, with and without correcting for past errors.
+
+    day_forecast needs columns forecast and actual (actual may be empty).
+    Demand is assumed to be the same in every hour of the day.
+
+      raw plan     trusts the forecast as it is
+      guided plan  counts on less wind: forecast minus the P90 error seen in the history
+    """
+    forecast = day_forecast["forecast"]
+    safe_wind = (forecast - history["error_p90"]).clip(lower=0)
+
+    def to_buy(wind):
+        return (demand_mw - wind).clip(lower=0)
+
+    plan = {
+        "demand_mw": demand_mw,
+        "forecast_avg_mw": float(forecast.mean()),
+        "expected_wind_avg_mw": float(forecast.mean() - history["bias"]),
+        "safe_wind_avg_mw": float(safe_wind.mean()),
+        "buy_raw_mw": float(to_buy(forecast).mean()),
+        "buy_guided_mw": float(to_buy(safe_wind).mean()),
+        "outcome": None,
+    }
+
+    # When the real wind is already known, check how each plan would have turned out.
+    actual = day_forecast["actual"]
+    if actual.notna().all():
+        needed = to_buy(actual)  # what the buyer really had to buy
+        outcome = {}
+        for name, wind in (("raw", forecast), ("guided", safe_wind)):
+            bought = to_buy(wind)
+            outcome[f"shortfall_{name}_mwh"] = float((needed - bought).clip(lower=0).sum())  # bought too little
+            outcome[f"surplus_{name}_mwh"] = float((bought - needed).clip(lower=0).sum())    # bought too much
+        plan["outcome"] = outcome
+    return plan
 
 
 def errors_by_hour_of_day(comparison: pd.DataFrame) -> list[dict]:
