@@ -1,0 +1,4 @@
+# Used by Vercel for the Python function (api/index.py). Docker uses backend/requirements.txt.
+fastapi==0.162.0
+pandas==3.1.0
+tzdata==2026.5

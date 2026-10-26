@@ -1,0 +1,275 @@
+/* ---------- page frame ---------- */
+.app-header {
+  background: var(--header);
+  color: #fff;
+}
+.app-header-inner,
+.app-main,
+.app-footer {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+.app-header-inner {
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+.app-header h1 {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.app-header p {
+  color: #b7c6d8;
+  font-size: 14px;
+}
+.app-main {
+  padding-top: 24px;
+  padding-bottom: 8px;
+  display: grid;
+  gap: 24px;
+}
+.app-footer {
+  padding-top: 8px;
+  padding-bottom: 32px;
+  color: var(--ink-soft);
+  font-size: 13px;
+  max-width: 78ch;
+  margin-left: max(24px, calc((100vw - 1240px) / 2));
+}
+
+/* ---------- controls ---------- */
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 24px;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+.control {
+  display: grid;
+  gap: 6px;
+}
+.control-label {
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.controls input,
+.controls button {
+  font: inherit;
+  color: var(--ink);
+  background: var(--page);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 7px 10px;
+  color-scheme: light dark;
+}
+.controls button {
+  cursor: pointer;
+  width: 36px;
+  font-size: 18px;
+  line-height: 1;
+}
+.controls button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+.day-picker {
+  display: flex;
+  gap: 6px;
+}
+.controls-summary {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: 14px;
+  max-width: 44ch;
+}
+.controls-summary strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+/* ---------- cards and layout grids ---------- */
+.card {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  min-width: 0;
+}
+.card-header {
+  margin-bottom: 14px;
+}
+.card-header h2 {
+  font-size: 17px;
+  font-weight: 600;
+}
+.card-header p {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.card-message {
+  color: var(--ink-soft);
+  padding: 24px 0;
+}
+.card-error {
+  color: var(--warn);
+}
+.grid-day {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 24px;
+}
+.grid-3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+.section-title {
+  font-size: 19px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+/* ---------- chart bits ---------- */
+.legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 20px;
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  font-size: 13px;
+  color: var(--ink-soft);
+}
+.legend li {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.swatch {
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+}
+.swatch-band {
+  height: 10px;
+  background: var(--band);
+  border: 1px solid var(--accent);
+}
+.tooltip {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  color: var(--ink);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
+/* ---------- guidance panel ---------- */
+.guidance dl {
+  margin: 0 0 16px;
+  display: grid;
+  gap: 0;
+}
+.guidance dl > div {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.guidance dt {
+  color: var(--ink-soft);
+  font-size: 14px;
+}
+.guidance dd {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+.guidance-key dd {
+  font-size: 26px;
+  color: var(--accent);
+}
+.guidance-note {
+  background: var(--warn-bg);
+  color: var(--ink);
+  border-radius: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  margin-bottom: 14px;
+}
+.guidance-source {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+/* ---------- headline accuracy numbers ---------- */
+.kpi-row {
+  list-style: none;
+  margin: 0 0 24px;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 24px;
+}
+.kpi {
+  display: grid;
+  gap: 2px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 14px 18px;
+}
+.kpi-warn {
+  border-left-color: var(--warn);
+}
+.kpi-label {
+  color: var(--ink-soft);
+  font-size: 13px;
+}
+.kpi-value {
+  font-size: 28px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.kpi-help {
+  color: var(--ink-soft);
+  font-size: 12px;
+}
+
+/* ---------- smaller screens ---------- */
+@media (max-width: 1000px) {
+  .grid-day,
+  .grid-3 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .kpi-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .controls-summary {
+    margin-left: 0;
+  }
+}
+@media (max-width: 560px) {
+  .app-header-inner,
+  .app-main,
+  .app-footer {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  .app-footer {
+    margin-left: 0;
+  }
+  .kpi-row {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+}

@@ -1,0 +1,14 @@
+# Start everything with:  docker compose up --build
+# Then open http://localhost:8080
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"   # optional: lets you open http://localhost:8000/docs
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
